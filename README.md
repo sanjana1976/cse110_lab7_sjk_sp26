@@ -1,31 +1,46 @@
 # Lab 7 - E2E Testing with Jest & Puppeteer
 
+Sanjana Kalarickal
+
 ## Check Your Understanding
 
 **1) Where would you fit your automated tests in your Recipe project development pipeline? Select one of the following and explain why.**
 
-- Within a Github action that runs whenever code is pushed
-- Manually run them locally before pushing code
-- Run them all after all development is completed
+**Answer:** Within a GitHub Action that runs whenever code is pushed.
 
-**Answer:** Within a GitHub action that runs whenever code is pushed.
+I would put the automated tests inside a GitHub Action that runs every time code is pushed or a pull request is opened. That way, the tests run automatically instead of depending on someone to remember to do it manually. It also helps catch bugs early before broken code gets merged into `main`.
 
-Running tests automatically via a GitHub Action whenever code is pushed is the best fit. It guarantees the tests are run consistently (we don't have to rely on developers remembering to run them), it catches regressions immediately on every push/PR before bad code can be merged into `main`, and it tests the code in a clean, reproducible CI environment instead of just on a single developer's machine. Manually running tests locally is unreliable because people forget, and waiting until "after all development is completed" defeats the purpose of testing — bugs caught late are far more expensive to fix than ones caught at the moment they were introduced.
+Another reason this is useful is because the tests run in a clean CI environment, so everyone’s code is checked under the same conditions instead of only working on one developer’s machine. If tests are only run at the end of development, bugs can pile up and become much harder to track down later.
+
+---
 
 **2) Would you use an end to end test to check if a function is returning the correct output? (yes/no)**
 
 **Answer:** No.
 
-End-to-end tests are meant to emulate full user interactions with the application from the browser/UI down through the entire stack. Checking that a single function returns the correct output is the job of a **unit test**, which is much faster, more focused, and easier to debug. Using an E2E test for that would be slow, brittle, and overkill.
+An end-to-end test would not be the right choice for checking whether a single function returns the correct value. That type of check is better handled with a unit test because unit tests are faster, simpler, and much easier to debug.
+
+E2E tests are meant to test the entire application flow from the user’s perspective, so using them for one small function would be unnecessary and inefficient.
+
+---
 
 **3) What is the difference between navigation and snapshot mode?**
 
-**Answer:** Navigation mode audits a page right after it finishes loading, so it measures the full load experience and is what gives you performance metrics like First Contentful Paint, Largest Contentful Paint, and overall load performance. Snapshot mode, on the other hand, just analyzes the page in its current state at the moment you run it — it does not reload the page or measure load behavior, so it can't give performance numbers or analyze JS execution. Snapshot is most useful for catching accessibility and best-practice issues in whatever state the DOM is currently in, while navigation is used when you care about how the page actually loads.
+**Answer:** Navigation mode tests a page while it is loading, while snapshot mode analyzes the page in its current state.
+
+Navigation mode reloads the page and measures how the site performs during the loading process. This is where metrics like First Contentful Paint (FCP) and Largest Contentful Paint (LCP) come from. It helps evaluate overall page performance and loading behavior.
+
+Snapshot mode is different because it does not reload the page. Instead, it captures and analyzes the page exactly as it currently appears in the browser. Because of that, it is more useful for checking things like accessibility issues or best practices in the current DOM state rather than load performance.
+
+---
 
 **4) Name three things we could do to improve the CSE 110 shop site based on the Lighthouse results.**
 
-**Answer:**
+1. **Optimize the product images.**
+   The images being loaded are much larger than the size they are displayed at on the page. Resizing them properly and using newer formats like WebP or AVIF would reduce loading time and improve performance.
 
-1. **Properly size and modernize the product images.** The product images are loaded at their full original resolution but displayed in 200px-wide cards, which wastes bandwidth. Serving correctly sized images and using modern formats like WebP or AVIF would significantly improve performance.
-2. **Improve accessibility metadata.** Adding a `lang` attribute to the `<html>` element, a `<meta name="description">` tag, and making sure buttons/links have accessible names would fix several accessibility and SEO audits that Lighthouse flags.
-3. **Reduce render-blocking resources and improve caching.** The site loads all of its JS as `type="module"` at the top of the page and has no caching headers on its assets. Deferring non-critical scripts, minifying CSS/JS, and setting longer cache lifetimes on static assets would improve load time on repeat visits.
+2. **Improve accessibility information.**
+   Adding a `lang` attribute to the `<html>` tag, including a proper meta description, and making sure buttons and links have accessible labels would improve both accessibility and SEO scores.
+
+3. **Reduce render-blocking resources and improve caching.**
+   Some scripts and assets slow down the initial page load. Deferring non-essential JavaScript, minifying CSS/JS files, and enabling better caching for static assets would help the site load faster, especially for returning users.
